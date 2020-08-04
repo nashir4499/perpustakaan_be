@@ -28,15 +28,19 @@ class PinjamController {
 
   async show({ request, response, params }) {
     const pinjam = await Pinjam.find(request.params.id);
+    await pinjam.loadMany(['buku', 'anggota'])
+    // return response.status(200).json(pinjam)
     return response.status(200).json(pinjam)
   }
 
   async update({ request, response, params }) {
-    const dataPinjam = request.only(['tgl_pinjam', 'tgl_kembali', 'kembali'])
+    const dataPinjam = request.only(['tgl_pinjam', 'tgl_kembali'/*, 'kembali'*/, 'buku_id', 'anggota_id'])
     const pinjam = await Pinjam.find(request.params.id);
     pinjam.tgl_pinjam = dataPinjam.tgl_pinjam
     pinjam.tgl_kembali = dataPinjam.tgl_kembali
-    pinjam.kembali = dataPinjam.kembali
+    // pinjam.kembali = dataPinjam.kembali
+    pinjam.buku_id = dataPinjam.buku_id
+    pinjam.anggota_id = dataPinjam.anggota_id
     await pinjam.save();
 
     return response.status(200).json(pinjam)
